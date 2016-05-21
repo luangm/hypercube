@@ -18,6 +18,11 @@ public class Fact {
     private Map<Dimension, Member> dimensionMembers;
     private Quantity quantity;
 
+    /**
+     * 当一个Fact被添加进Hypercube后, 可以找到.
+     */
+    private Hypercube hypercube;
+
     public Concept getConcept() {
         return concept;
     }
@@ -64,5 +69,18 @@ public class Fact {
 
     public void setQuantity(Quantity quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return concept + " @ " + period + " = " + quantity;
+    }
+
+    public Hypercube getHypercube() {
+        return hypercube;
+    }
+
+    public void setHypercube(Hypercube hypercube) {
+        this.hypercube = hypercube;
     }
 }

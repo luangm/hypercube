@@ -8,12 +8,11 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class ComputedFact extends Fact {
 
     private String formula;
+    private Quantity quantityCache;
+    private boolean cacheValid;
 
     public ComputedFact() {
         //
-    }
-    public ComputedFact(String formula) {
-        this.formula = formula;
     }
 
     public String getFormula() {
@@ -26,6 +25,23 @@ public class ComputedFact extends Fact {
 
     @Override
     public Quantity getQuantity() {
-        throw new NotImplementedException();
+        if (getHypercube() == null) {
+            throw new RuntimeException("Fact is not attached to Hypercube");
+        }
+
+        if (quantityCache != null && cacheValid) {
+            return quantityCache;
+        }
+
+        Quantity result = getHypercube().getQuantity(this);
+        setQuantity(result);
+
+        return result;
+    }
+
+    @Override
+    public void setQuantity(Quantity quantity) {
+        quantityCache = quantity;
+        cacheValid = true;
     }
 }

@@ -12,6 +12,10 @@ public class Period {
     private LocalDate instantDate;
     private LocalDate endDate;
 
+    public Period(int year, int month, int day) {
+        this(LocalDate.of(year, month, day));
+    }
+
     public Period(LocalDate instantDate) {
         this.instantDate = instantDate;
     }

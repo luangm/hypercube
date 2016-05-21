@@ -47,4 +47,9 @@ public class Quantity {
     private void setValue(BigDecimal value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return getValue() + " " + getUnit();
+    }
 }

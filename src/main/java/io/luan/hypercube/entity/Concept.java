@@ -73,4 +73,13 @@ public class Concept {
         this.namespace = namespace;
     }
 
+    @Override
+    public int hashCode() {
+        return (namespace + ":" + name).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return namespace + ":" + name;
+    }
 }
