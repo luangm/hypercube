@@ -4,13 +4,14 @@ package io.luan.hypercube.entity;
  * 一个金融概念，如Cash（现金），Asset（资产）或者Revenue（收入）
  */
 public class Concept {
+    public static final String DEFAULT_NAMESPACE = "io.luan.hypercube.default";
 
     /**
      * 概念的命名空间。如果不填则为默认
      * 不同公司之间，或者不同用处下可以定义命名空间。
      * 计算时候优先考虑同一命名空间下的。
      */
-    private String namespace = "io.luan.hypercube.default";
+    private String namespace;
 
     /**
      * Concept的标示名，这个必须是同一命名空间下全局唯一的
@@ -25,6 +26,24 @@ public class Concept {
      * 如：Cash(现金)是存量（2016/1/1的现金值）
      */
     private boolean isFlow;
+
+    public Concept(String name) {
+        this(DEFAULT_NAMESPACE, name, false);
+    }
+
+    public Concept(String name, boolean isFlow) {
+        this(DEFAULT_NAMESPACE, name, isFlow);
+    }
+
+    public Concept(String namespace, String name) {
+        this(namespace, name, false);
+    }
+
+    public Concept(String namespace, String name, boolean isFlow) {
+        this.namespace = namespace;
+        this.name = name;
+        this.isFlow = isFlow;
+    }
 
     public boolean getIsFlow() {
         return isFlow;

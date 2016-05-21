@@ -9,6 +9,13 @@ public class ComputedFact extends Fact {
 
     private String formula;
 
+    public ComputedFact() {
+        //
+    }
+    public ComputedFact(String formula) {
+        this.formula = formula;
+    }
+
     public String getFormula() {
         return formula;
     }

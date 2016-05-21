@@ -13,6 +13,12 @@ public class Member {
     private Dimension dimension;
 
     /**
+     * A named member must be unique within a Dimension
+     * And it's Dimension must be Explicit Dimension
+     */
+    private String name;
+
+    /**
      * Use a String to represent the value.
      */
     private String value;
@@ -62,6 +68,14 @@ public class Member {
         }
 
         return true;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Member getParentMember() {

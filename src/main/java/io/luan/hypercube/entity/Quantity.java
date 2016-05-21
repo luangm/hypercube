@@ -15,6 +15,18 @@ public class Quantity {
         // Disable
     }
 
+    public Quantity(double value, String unit) {
+        this(BigDecimal.valueOf(value), unit);
+    }
+
+    public Quantity(long value, String unit) {
+        this(BigDecimal.valueOf(value), unit);
+    }
+
+    public Quantity(int value, String unit) {
+        this(BigDecimal.valueOf(value), unit);
+    }
+
     public Quantity(BigDecimal value, String unit) {
         setValue(value);
         setUnit(unit);
