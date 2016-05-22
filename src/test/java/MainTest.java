@@ -1,10 +1,5 @@
-import io.luan.exp4j.expression.Expression;
 import io.luan.hypercube.entity.*;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * Created by Miao on 5/20/2016.
@@ -23,8 +18,8 @@ public class MainTest {
 
         Context context = new Context();
 
-        Period period = new Period(2016, 1,1);
-        Period period2 = new Period(2016, 12,31);
+        Period period = new Period(2016, 1, 1);
+        Period period2 = new Period(2016, 12, 31);
 
         Fact asset = new Fact();
         asset.setConcept(assetConcept);
@@ -32,7 +27,7 @@ public class MainTest {
         asset.setPeriod(period);
         asset.setQuantity(new Quantity(100, "USD"));
 
-        Fact liability  = new Fact();
+        Fact liability = new Fact();
         liability.setConcept(liabConcept);
         liability.setContext(context);
         liability.setPeriod(period);
@@ -50,7 +45,7 @@ public class MainTest {
         asset2.setPeriod(period2);
         asset2.setQuantity(new Quantity(500, "USD"));
 
-        Fact liability2  = new Fact();
+        Fact liability2 = new Fact();
         liability2.setConcept(liabConcept);
         liability2.setContext(context);
         liability2.setPeriod(period2);
@@ -88,9 +83,8 @@ public class MainTest {
         cube.addFact(equity3);
 
 
-
-            System.out.println(equity.getQuantity());
-            System.out.println(equity2.getQuantity());
+        System.out.println(equity.getQuantity());
+        System.out.println(equity2.getQuantity());
 
         System.out.println(equity3.getQuantity());
 

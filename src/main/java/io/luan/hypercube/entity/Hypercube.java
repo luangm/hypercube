@@ -1,9 +1,11 @@
 package io.luan.hypercube.entity;
 
-import io.luan.exp4j.expression.Expression;
-import io.luan.exp4j.expression.expressions.ConstantExpression;
-import io.luan.exp4j.expression.expressions.NumericExpression;
-import io.luan.exp4j.expression.expressions.VariableExpression;
+
+import io.luan.exp4j.Expression;
+import io.luan.exp4j.expressions.NumericExpression;
+import io.luan.exp4j.expressions.symbolic.ConstantExpression;
+import io.luan.exp4j.expressions.symbolic.VariableExpression;
+import io.luan.exp4j.expressions.type.NumberExpression;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -49,6 +51,21 @@ public class Hypercube {
         constMap = new HashMap<>(10);
     }
 
+    public void addConstant(Constant constant) {
+        String conceptName = constant.getConcept().getName();
+        List<HyperNode> list = constNodes.get(conceptName);
+        if (list == null) {
+            list = new ArrayList<>(10);
+            constNodes.put(conceptName, list);
+            conceptMap.put(conceptName, constant.getConcept());
+        }
+
+        HyperNode node = new HyperNode(constant);
+        list.add(node);
+        constMap.put(constant, node);
+
+    }
+
     /**
      * 将一个fact插入hypercube
      */
@@ -75,77 +92,17 @@ public class Hypercube {
         if (fact instanceof ComputedFact) {
             ComputedFact computedFact = (ComputedFact) fact;
             Expression exp = Expression.parse(computedFact.getFormula());
-            for (VariableExpression varExp : exp.getVariables()) {
+            for (VariableExpression varExp : Expression.variables(exp)) {
                 HyperNode depNode = getFactNode(varExp.getName(), fact.getPeriod());
                 node.addDependency(depNode);
             }
-            for (ConstantExpression constExp: exp.getConstants()) {
+            for (ConstantExpression constExp : Expression.constants(exp)) {
                 System.out.println(constExp);
                 HyperNode depNode = getConstNode(constExp.getName().replace("#", ""));
                 node.addDependency(depNode);
             }
 
         }
-    }
-
-    public void addConstant(Constant constant) {
-        String conceptName = constant.getConcept().getName();
-        List<HyperNode> list = constNodes.get(conceptName);
-        if (list == null) {
-            list = new ArrayList<>(10);
-            constNodes.put(conceptName, list);
-            conceptMap.put(conceptName, constant.getConcept());
-        }
-
-        HyperNode node = new HyperNode(constant);
-        list.add(node);
-        constMap.put(constant, node);
-
-    }
-
-    public Quantity getQuantity(Fact fact) {
-        HyperNode node = factMap.get(fact);
-        if (node.fact instanceof ComputedFact) {
-            ComputedFact compFact = (ComputedFact) node.fact;
-            Expression exp = Expression.parse(compFact.getFormula());
-            Map<String, Object> input = new HashMap<>(10);
-            for (HyperNode depNode: node.dependency) {
-                //System.out.println(depNode);
-                if (depNode.fact != null) {
-                    String inputName = depNode.fact.getConcept().getName();
-                    BigDecimal inputVal = depNode.fact.getQuantity().getValue();
-                    input.put(inputName, inputVal);
-                }
-
-                if (depNode.constant != null) {
-                    String inputName = "#" + depNode.constant.getConcept().getName();
-                    BigDecimal inputVal = depNode.constant.getQuantity().getValue();
-                    input.put(inputName, inputVal);
-                }
-            }
-            NumericExpression result = (NumericExpression) exp.evaluate(input);
-            return new Quantity(result.toDoubleValue(), "Unit");
-        }
-        else {
-            return node.fact.getQuantity();
-        }
-    }
-
-    private HyperNode getFactNode(String conceptName, Period period) {
-        if (factNodes == null) {
-            return null;
-        }
-        List<HyperNode> list = factNodes.get(conceptName);
-        if (list == null) {
-            return null;
-        }
-
-        for (HyperNode node : list) {
-            if (node.fact.getPeriod().equals(period)) {
-                return node;
-            }
-        }
-        return null;
     }
 
     private HyperNode getConstNode(String conceptName) {
@@ -171,6 +128,49 @@ public class Hypercube {
         return null;
     }
 
+    private HyperNode getFactNode(String conceptName, Period period) {
+        if (factNodes == null) {
+            return null;
+        }
+        List<HyperNode> list = factNodes.get(conceptName);
+        if (list == null) {
+            return null;
+        }
+
+        for (HyperNode node : list) {
+            if (node.fact.getPeriod().equals(period)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    public Quantity getQuantity(Fact fact) {
+        HyperNode node = factMap.get(fact);
+        if (node.fact instanceof ComputedFact) {
+            ComputedFact compFact = (ComputedFact) node.fact;
+            Expression exp = Expression.parse(compFact.getFormula());
+            Map<String, Object> input = new HashMap<>(10);
+            for (HyperNode depNode : node.dependency) {
+                //System.out.println(depNode);
+                if (depNode.fact != null) {
+                    String inputName = depNode.fact.getConcept().getName();
+                    Number inputVal = depNode.fact.getQuantity().getValue();
+                    input.put(inputName, inputVal);
+                }
+
+                if (depNode.constant != null) {
+                    String inputName = "#" + depNode.constant.getConcept().getName();
+                    Number inputVal = depNode.constant.getQuantity().getValue();
+                    input.put(inputName, inputVal);
+                }
+            }
+            NumberExpression result = (NumberExpression) exp.evaluate(input);
+            return new Quantity(result.getNumber(), "Unit");
+        } else {
+            return node.fact.getQuantity();
+        }
+    }
 
     private class HyperNode {
         Fact fact;
@@ -180,6 +180,7 @@ public class Hypercube {
         public HyperNode(Fact fact) {
             this.fact = fact;
         }
+
         public HyperNode(Constant constant) {
             this.constant = constant;
         }

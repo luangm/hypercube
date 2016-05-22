@@ -8,26 +8,30 @@ import java.math.BigDecimal;
  */
 public class Quantity {
 
-    private BigDecimal value;
+    private Number value;
     private String unit;
 
     private Quantity() {
         // Disable
     }
 
+    public Quantity(long value, String unit) {
+        this((Number) value, unit);
+    }
+
     public Quantity(double value, String unit) {
         this(BigDecimal.valueOf(value), unit);
     }
 
-    public Quantity(long value, String unit) {
-        this(BigDecimal.valueOf(value), unit);
-    }
-
     public Quantity(int value, String unit) {
-        this(BigDecimal.valueOf(value), unit);
+        this((Number) value, unit);
     }
 
     public Quantity(BigDecimal value, String unit) {
+        this((Number) value, unit);
+    }
+
+    public Quantity(Number value, String unit) {
         setValue(value);
         setUnit(unit);
     }
@@ -40,11 +44,11 @@ public class Quantity {
         this.unit = unit;
     }
 
-    public BigDecimal getValue() {
+    public Number getValue() {
         return value;
     }
 
-    private void setValue(BigDecimal value) {
+    private void setValue(Number value) {
         this.value = value;
     }
 
